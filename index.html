@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Sign in</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/index.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <div class="form-signin" id="form-login">
+        <h2 class="form-signin-heading">Interactions report</h2>
+        <table style="width:100%">
+          <tr>
+            <td>First one</td>
+            <td><input id="user_passwd_first" name="passwd" type="password" class="form-control" placeholder="Password"></td>
+          </tr>
+          <tr>
+            <td>Second One</td>
+            <td><input id="user_passwd_second" name="passwd" type="password" class="form-control" placeholder="Password"></td>
+          </tr>
+          <tr>
+            <td>Third one</td>
+            <td><input id="user_passwd_third" name="passwd" type="password" class="form-control" placeholder="Password"></td>
+          </tr>
+        </table>
+        <input type="button" value="Sign in" id="login" class="btn btn-lg btn-primary btn-block"></input>
+      </div>
+    </div> <!-- /container -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!--script src="../../assets/js/ie10-viewport-bug-workaround.js"></script-->
+
+    <script src="js/client.js"></script>
+    <script src="js/taffy-min.js"></script>
+    <script src="js/data-base.js"></script>
+
+    <script >
+      $(function(){
+        var users;
+
+        function alertsucces(){
+          alert(JSON.stringify(users.data));
+        }
+
+        function loginSuccessFun(data){
+          this.data = {
+            id : data.user.id,
+            email : data.user.email,
+            name : data.user.name,
+            authToken : data.token.authToken,
+            expires : data.token.expires
+          }
+          this.authenticated = true;
+          this.inputField.addClass("right-input");
+        }
+
+        function loginErrorFun(data){
+          this.authenticated = false;
+          this.inputField.addClass("wrong-input");
+        }
+
+        users = [{
+          email : "christian@interact.io",
+          authenticated : false,
+          inputField : $("#user_passwd_first"),
+          loginSuccess : loginSuccessFun,
+          loginError : loginErrorFun
+        },
+        {
+          email : "michael@interact.io",
+          authenticated : false,
+          inputField : $("#user_passwd_second"),
+          loginSuccess : loginSuccessFun,
+          loginError : loginErrorFun
+        },
+        {
+          email : "sebastian@interact.io",
+          authenticated : false,
+          inputField : $("#user_passwd_third"),
+          loginSuccess : loginSuccessFun,
+          loginError : loginErrorFun
+        }];
+
+        $("#login").click(function(e){
+          $.when(
+            logInUser(users[0].email, users[0].inputField.val(), users[0]),
+            logInUser(users[1].email, users[1].inputField.val(), users[1]),
+            logInUser(users[2].email, users[2].inputField.val(), users[2])
+          ).then(function(){
+            if(users[0].authenticated && users[1].authenticated && users[2].authenticated){
+              usersInfo = [];
+              $.each(users, function(key, us){
+                usersInfo.push(us.data);
+              });
+              
+              storeUsersInfo(usersInfo);
+              window.location.replace("./interactionsreport.html")
+            }
+          });
+        });
+      });
+    </script>
+
+  </body>
+</html>

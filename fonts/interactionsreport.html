@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Report</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/interactionsreport.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <p class="navbar-brand" href="#">Interactions report</p>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a id="logout">Sign out</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="main-container">
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Interactions report.</h3>
+          <p>For users Christian, Michael and Sebastian.</p>
+        </div>
+        <div class="col-md-3 col-md-offset-5">
+          <table style="width:100%">
+            <tr>
+              <td>Time report</td>
+              <td class="options">
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-default active">
+                    <input type="radio" name="time-report" value="tr-7d" checked>7D
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="time-report" value="tr-30d">30D
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="time-report" value="tr-90d">90D
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="time-report" value="tr-12m">12M
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Interval</td>
+              <td class="options">
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-default active">
+                    <input type="radio" name="interval" value="ri-daily" checked>Daily
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="interval" value="ri-weekly">Weekly
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="interval" value="ri-monthly">Monthly
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Aggregation</td>
+              <td class="options">
+                <div class="btn-group" data-toggle="buttons">                  
+                  <label class="btn btn-default active">
+                    <input type="radio" name="aggregation-level" value="al-ind" checked>Individually
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="aggregation-level" value="al-grp">Group
+                  </label>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="graph-container"></div>
+    </div>
+
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!--script src="../../assets/js/ie10-viewport-bug-workaround.js"></script-->
+
+    <script src="js/data-source.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/client.js"></script>
+    <script src="js/taffy-min.js"></script>
+    <script src="js/data-base.js"></script>
+
+    <script >
+      $(function(){
+        function updateGraph(){
+          var timeReport = $("input[name='time-report']:checked").val();
+          var interval = $("input[name='interval']:checked").val();
+          var aggregation = $("input[name='aggregation-level']:checked").val();
+
+          var ds = updateDataSource(timeReport, interval, aggregation);
+
+          buildGraph($("#graph-container"), ds);
+        }
+
+        $(".options .btn-group").on('change', updateGraph);
+
+        function getSuccessFun(data){
+          this.data = [];
+          data.forEach(function(inter){
+            this.data.push({
+              id : inter.id,
+              type : inter.type,
+              userId : this.id,
+              time : inter.time
+            })
+          })
+        }
+
+        var usersInfo = queryUsersInfo();
+        var users = [];
+
+        usersInfo.forEach(function(us){
+          users.push({
+            id : us.id,
+            authToken : us.authToken
+          })
+        })
+
+        $.when(
+          getInteractionsInfo(users[0]),
+          getInteractionsInfo(users[1]),
+          getInteractionsInfo(users[2])
+        ).then(function(){
+          var interactionsInfo = [];
+          users.forEach(function(us){
+            if(typeof us.data != 'undefined'){
+              interactionsInfo.push(us.data);
+            }
+
+            storeInteractionsInfo(interactionsInfo);
+            updateGraph();
+          })
+        })
+
+      });
+    </script>
+
+  </body>
+</html>

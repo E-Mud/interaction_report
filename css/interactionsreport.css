@@ -1,0 +1,45 @@
+body {
+	padding-top : 70px;
+	padding-bottom : 30px;
+	background : #eeeeee;
+} 
+
+.main-container {
+	padding-left: 30px;
+	padding-right: 30px;
+}
+
+
+.data-option p{
+	display : inline;
+	text-align: left;
+}
+
+.data-option{
+	padding: 4px;
+}
+
+.navbar-right a{
+	margin-right: 10px;
+}
+
+td {
+	padding : 4px;
+}
+
+.options {
+	text-align: right;
+}
+
+.navbar-header p,
+.model-header p {
+	margin-bottom: 0px;
+}
+
+.label-disabled { 
+  color : #ccc;
+}
+
+#filter-panel {
+	margin-top: 10px;
+}
