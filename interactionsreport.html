@@ -130,6 +130,22 @@
           </div>
         </div>
       </div>
+
+      <div id="table-container">
+        <table class="table">
+          <thead>
+            <tr>
+              <td>Date</td>
+              <td>User e-mail</td>
+              <td>Type</td>
+            </tr>
+          </thead>
+          <div id="table-content">
+            <tbody id="inter-table-body"></tbody>
+          </div>
+        </table>
+      </div>
+
     </div>
 
     <div class="modal fade" id="wait-dialog" data-backdrop="static" data-keyboard="false">
@@ -153,11 +169,11 @@
     <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
     <!--script src="../../assets/js/ie10-viewport-bug-workaround.js"></script-->
 
-    <script src="js/data-source.js"></script>
     <script src="js/graph.js"></script>
     <script src="js/client.js"></script>
     <script src="js/taffy-min.js"></script>
     <script src="js/data-base.js"></script>
+    <script src="js/table.js"></script>
 
     <script >
       $(function(){
@@ -178,11 +194,24 @@
           buildGraph($("#graph-container"), ds);
         }
 
+        function updateTable(){
+          var interInfo = queryInteractions({startTime : getDeadline($("input[name='time-report']:checked").val())});
+          var usersInfo = queryUsersInfo();
+
+          buildTable($("#inter-table-body"), interInfo, usersInfo);
+        }
 
         //------------------------------------ Event handling ---------------------------------//
         $("#logout").click(function(){
-          removeInfo();
-          window.location.replace("./index.html");
+          var usersInfo = queryUsersInfo();
+          $.when(
+            logOutUser(usersInfo[0].authToken, function(data){}),
+            logOutUser(usersInfo[1].authToken, function(data){}),
+            logOutUser(usersInfo[2].authToken, function(data){})
+          ).then(function(){
+            removeInfo();
+            window.location.replace("./index.html");
+          });
         })
 
         $(".options .btn-group").change(updateGraph);
@@ -260,6 +289,7 @@
           
           $("#wait-dialog").modal('hide');
           updateGraph();
+          updateTable();
         })
 
       });

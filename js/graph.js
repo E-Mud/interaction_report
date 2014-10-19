@@ -116,6 +116,10 @@ function sliceData(data, time, interval){
     return result;
 }
 
+function getDeadline(timeValue){
+    return (new Date()).getTime() - TIME[timeValue];
+}
+
 //------------------ Interval functions ------------------------------------------//
 function getNexDate(prevTime, interval){
     var date = new Date(prevTime);
