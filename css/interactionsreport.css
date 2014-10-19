@@ -36,10 +36,23 @@ td {
 	margin-bottom: 0px;
 }
 
-.label-disabled { 
-  color : #ccc;
+.label-disabled {
+	color : #ccc;
 }
 
 #filter-panel {
 	margin-top: 10px;
+}
+
+table {
+    width: 100%;
+}
+
+#table-content{
+	height: 150px;
+	overflow-y: auto;
+}
+
+#table-container table{
+	table-layout: fixed;
 }
