@@ -38,8 +38,11 @@
             <td><input id="user_passwd_third" name="passwd" type="password" class="form-control" placeholder="Password"></td>
           </tr>
         </table>
+        <!--input id="email" name="email" class="form-control" placeholder="Email" required autofocus>
+        <input id="passwd" name="passwd" type="password" class="form-control" placeholder="Password" required-->
         <input type="button" value="Sign in" id="login" class="btn btn-lg btn-primary btn-block"></input>
       </div>
+      <!--button id="loginbttn" class="btn btn-lg btn-primary btn-block">Entrar</button--> 
     </div> <!-- /container -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
@@ -108,7 +111,8 @@
               $.each(users, function(key, us){
                 usersInfo.push(us.data);
               });
-              
+
+              alert("stroring usI" + JSON.stringify(usersInfo));
               storeUsersInfo(usersInfo);
               window.location.replace("./interactionsreport.html")
             }

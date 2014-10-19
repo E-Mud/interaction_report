@@ -1,0 +1,33 @@
+body {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: #eee;
+}
+
+.form-signin {
+  max-width: 530px;
+  padding: 15px;
+  margin: 0 auto;
+  background-color: #aaa;
+} 
+
+.form-signin td{
+	padding-top: 5px;
+	padding-bottom: 5px;
+}
+
+#login {
+	margin-top: 5px;
+}
+
+.wrong-input {   
+  border-color: rgba(229, 23, 23, 0.8);
+  box-shadow: 0 1px 1px rgba(229, 23, 23, 0.075) inset, 0 0 8px rgba(229, 23, 23, 0.6);
+  outline: 0 none;
+}
+
+.right-input {   
+  border-color: rgba(23, 229, 23, 0.8);
+  box-shadow: 0 1px 1px rgba(23, 229, 23, 0.075) inset, 0 0 8px rgba(23, 229, 23, 0.6);
+  outline: 0 none;
+}

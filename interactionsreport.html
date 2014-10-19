@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Report</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="css/interactionsreport.css" rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <p class="navbar-brand" href="#">Interactions report</p>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a id="logout">Sign out</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="main-container">
+      <div class="row">
+        <div class="col-md-4">
+          <h3>Interactions report.</h3>
+          <p>For users Christian, Michael and Sebastian.</p>
+        </div>
+        <div class="col-md-3 col-md-offset-5 panel">
+          <table>
+            <tr>
+              <td>Time report</td>
+              <td class="options">
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-default active">
+                    <input type="radio" name="time-report" value="tr-7d" checked>7D
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="time-report" value="tr-30d">30D
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="time-report" value="tr-90d">90D
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="time-report" value="tr-12m">12M
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Interval</td>
+              <td class="options">
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-default active">
+                    <input type="radio" name="interval" value="ri-daily" checked>Daily
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="interval" value="ri-weekly">Weekly
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="interval" value="ri-monthly">Monthly
+                  </label>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Aggregation</td>
+              <td class="options">
+                <div class="btn-group" data-toggle="buttons">                  
+                  <label class="btn btn-default active">
+                    <input type="radio" name="aggregation-level" value="al-ind" checked>Individually
+                  </label>
+                  <label class="btn btn-default">
+                    <input type="radio" name="aggregation-level" value="al-grp">Group
+                  </label>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+
+      <div id="graph-container"></div>
+
+      <div id="filter-panel" class="panel panel-default">
+        <div class="panel-heading">
+          <p class="panel-title">Filter</p>
+        </div>
+        <div class="panel-body">
+          <label id="ft-all">
+            <input type="checkbox" checked>All
+          </label>
+          <div class="filter-row">
+            <label class="checkbox-inline label-disabled">
+              <input class="filter" type="checkbox" value="sms-incoming" checked disabled>SMS (in)
+            </label>
+            <label class="checkbox-inline label-disabled">
+              <input class="filter" type="checkbox" value="sms-outgoing" checked disabled>SMS (out)
+            </label>
+            <label class="checkbox-inline label-disabled">
+              <input class="filter" type="checkbox" value="call-incoming" checked disabled>Call (in)
+            </label>
+            <label class="checkbox-inline label-disabled">
+              <input class="filter" type="checkbox" value="call-outgoing" checked disabled>Call (out)
+            </label>
+            <label class="checkbox-inline label-disabled">
+              <input class="filter" type="checkbox" value="email-incoming" checked disabled>E-Mail (in)
+            </label>
+            <label class="checkbox-inline label-disabled">
+              <input class="filter" type="checkbox" value="email-outgoing" checked disabled>E-Mail (out)
+            </label>
+            <label class="checkbox-inline label-disabled">
+              <input class="filter" type="checkbox" value="im-incoming" checked disabled>IM (in)
+            </label>
+            <label class="checkbox-inline label-disabled">
+              <input class="filter" type="checkbox" value="im-outgoing" checked disabled>IM (out)
+            </label>
+            <button class="btn btn-primary pull-right" id="apply-filter" disabled>Apply filter</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="wait-dialog" data-backdrop="static" data-keyboard="false">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <p>Fetching data from server, please wait...</p>
+          </div>
+          <div class="modal-body">
+            <div class="progress progress-striped active">
+              <div class="progress-bar progress-striped" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"/>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="http://code.highcharts.com/highcharts.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <!--script src="../../assets/js/ie10-viewport-bug-workaround.js"></script-->
+
+    <script src="js/data-source.js"></script>
+    <script src="js/graph.js"></script>
+    <script src="js/client.js"></script>
+    <script src="js/taffy-min.js"></script>
+    <script src="js/data-base.js"></script>
+
+    <script >
+      $(function(){
+        function updateGraph(){
+          var timeReport = $("input[name='time-report']:checked").val();
+          var interval = $("input[name='interval']:checked").val();
+          var aggregation = $("input[name='aggregation-level']:checked").val();
+          var typeFilters = [];
+
+          if(!$("#ft-all input").prop('checked')){
+            $(".filter-row input[type=checkbox]:checked").each(function(){
+              typeFilters.push($(this).val());
+            })
+          }
+
+          var ds = updateDataSource(timeReport, interval, aggregation, typeFilters);
+
+          buildGraph($("#graph-container"), ds);
+        }
+
+
+        //------------------------------------ Event handling ---------------------------------//
+        $("#logout").click(function(){
+          removeInfo();
+          window.location.replace("./index.html");
+        })
+
+        $(".options .btn-group").change(updateGraph);
+
+        $("#ft-all").click(function(){
+          var allChecked = $("#ft-all input").prop('checked');
+          if(allChecked){
+            $(".filter-row label").addClass("label-disabled")
+          }else{
+            $(".filter-row label").removeClass("label-disabled")
+          }
+          $(".filter").prop('disabled', allChecked)
+        })
+
+        $("#filter-panel .panel-body label").click(function(){
+          if(!$(this).find("input[type=checkbox]").prop('disabled')){
+            $("#apply-filter").prop('disabled', false); 
+          }
+        })
+
+        $("#apply-filter").click(function(){
+          $("#apply-filter").prop('disabled', true);
+          updateGraph();
+        })
+
+
+        //----------------------------------------------- Dialog ------------------------------------------------------------//
+        var waitProgress = 0;
+        $('#wait-dialog').modal('show');
+
+        function updateProgress(){
+          waitProgress += 33;
+          $('#wait-dialog .progress-bar').css('width', waitProgress+'%').attr('aria-valuenow', waitProgress);
+        }
+
+
+        //----------------------------------------------- Fetch data from server -------------------------------------------//
+        function getSuccessFun(data){
+          updateProgress();
+          var newData = [];
+          var usId = this.id;
+          data.forEach(function(inter){
+            newData.push({
+              id : inter.id,
+              type : inter.type,
+              userId : usId,
+              time : inter.time
+            })
+          })
+          this.data = newData;
+        }
+
+        var usersInfo = queryUsersInfo();
+        var users = [];
+
+        usersInfo.forEach(function(us){
+          users.push({
+            id : us.id,
+            authToken : us.authToken,
+            successFun : getSuccessFun
+          })
+        })
+
+        $.when(
+          getInteractionsInfo(users[0]),
+          getInteractionsInfo(users[1]),
+          getInteractionsInfo(users[2])
+        ).then(function(){
+          var interactionsInfo = [];
+          users.forEach(function(us){
+            if(typeof us.data != 'undefined'){
+              storeInteractionsInfo(us.data);
+            }            
+          })
+          
+          $("#wait-dialog").modal('hide');
+          updateGraph();
+        })
+
+      });
+    </script>
+
+  </body>
+</html>
